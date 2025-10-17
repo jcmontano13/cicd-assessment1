@@ -1,0 +1,28 @@
+# Core dependencies
+Django==5.2.7
+djangorestframework==3.16.1
+django-cors-headers==4.9.0
+python-dotenv==1.1.1
+sqlparse==0.5.3
+asgiref==3.10.0
+tzdata==2025.2
+
+# Database
+psycopg2-binary==2.9.11
+
+# Deployment
+gunicorn==21.2.0
+
+# Testing
+pytest==8.4.2
+pytest-django==4.11.1
+
+# Optional CLI/dev tools
+colorama==0.4.6
+iniconfig==2.1.0
+packaging==25.0
+pluggy==1.6.0
+Pygments==2.19.2
+
+# Your custom package (if intentional)
+pi==0.1.2

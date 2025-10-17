@@ -32,6 +32,7 @@ jobs:
       PGPASSWORD: postgres
       PGHOST: localhost
       PGPORT: 5432
+      DJANGO_SETTINGS_MODULE: config.settings  # ✅ Required for test discovery
 
     steps:
     - uses: actions/checkout@v4

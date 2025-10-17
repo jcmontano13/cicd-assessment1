@@ -31,8 +31,6 @@ SECRET_KEY = getenv("SECRET_KEY")
 DEBUG = getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", "").split(",")
 
-
-
 # Application definition
 
 INSTALLED_APPS = [

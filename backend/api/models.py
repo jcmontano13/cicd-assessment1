@@ -22,3 +22,7 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+# ✅ Dummy model to trigger migrations
+class Placeholder(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)

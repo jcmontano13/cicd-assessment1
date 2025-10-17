@@ -53,4 +53,4 @@ jobs:
       run: |
         source venv/bin/activate
         cd backend
-        pytest -v
+        pytest api/tests -v

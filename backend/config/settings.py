@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'api',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -171,4 +171,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'api.backends.EmailBackend',  # custom backend (you’ll create this)
+]

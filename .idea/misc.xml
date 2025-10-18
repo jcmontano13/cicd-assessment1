@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.13 (ISCG7444-flask)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13 virtualenv at C:\Users\admin\PycharmProjects\cicd-assessment1\backend\.venv (2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.14 virtualenv at C:\Users\admin\PycharmProjects\cicd-assessment1\backend\.venv" project-jdk-type="Python SDK" />
 </project>

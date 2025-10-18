@@ -9,6 +9,7 @@ export default function Register() {
   };
 
   const handleSubmit = async e => {
+    console.log('API URL:', import.meta.env.VITE_API_URL);
     e.preventDefault();
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/register/`, {

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # local apps go here, e.g. "tracker",
+    "register",
 ]
 
 MIDDLEWARE = [

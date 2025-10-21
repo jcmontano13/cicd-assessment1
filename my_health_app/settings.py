@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # local apps go here, e.g. "tracker",
+    "register",
 ]
 
 MIDDLEWARE = [
@@ -58,11 +59,16 @@ WSGI_APPLICATION = "my_health_app.wsgi.application"
 
 # --- Database ---
 DATABASES = {
-    "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
-        conn_max_age=600,
-        ssl_require=not DEBUG,  # Neon requires SSL in prod
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("PGDATABASE"),
+        "USER": os.getenv("PGUSER"),
+        "PASSWORD": os.getenv("PGPASSWORD"),
+        "HOST": os.getenv("PGHOST"),
+        "PORT": os.getenv("PGPORT", 5432),
+        "OPTIONS": {"sslmode": "require"},
+        "DISABLE_SERVER_SIDE_CURSORS": True,
+    }
 }
 
 # --- Password validation ---

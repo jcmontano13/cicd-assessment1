@@ -12,26 +12,25 @@ jobs:
 
     services:
       web:
-        build:
-          context: .
+        image: jcmontano13/healthapp:latest
         ports:
           - 8000:8000
         options: >-
-          --health-cmd="curl --fail http://localhost:8000 || exit 1"
+          --health-cmd="curl -f http://localhost:8000/ || exit 1"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=5
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install Python and dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Wait for Django to be ready
-      run: sleep 20
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-    - name: Run registration test
-      run: python register/test.py
+      - name: Run Django test
+        run: python manage.py test register.test

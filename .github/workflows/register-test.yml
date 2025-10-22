@@ -1,4 +1,4 @@
-name: Registration Test CI
+name: Docker Image CI
 
 on:
   push:
@@ -7,30 +7,37 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
 
-    services:
-      web:
-        image: jcmontano13/healthapp:latest
-        ports:
-          - 8000:8000
-        options: >-
-          --health-cmd="curl -f http://localhost:8000/ || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run Django registration tests
+      run: python manage.py test register.test
+
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+    - name: Build Docker image
+      run: docker build . --file Dockerfile --tag jcmontano13/healthapp:latest
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run Django test
-        run: python manage.py test register.test
+    - name: Push to Docker Hub
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        docker push jcmontano13/healthapp:latest

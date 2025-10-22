@@ -13,5 +13,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build Docker image locally
+    - name: Build Docker image in CI
       run: docker build . -t healthapp-ci

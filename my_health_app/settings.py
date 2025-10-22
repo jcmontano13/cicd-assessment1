@@ -1,7 +1,7 @@
 """
 Django settings for my_health_app project.
 """
-
+import sys
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -105,3 +105,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+if 'test' in sys.argv:
+    DATABASES['default']['TEST'] = {
+        'MIRROR': 'default'
+    }

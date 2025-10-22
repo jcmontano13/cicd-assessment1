@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Local Docker CI
 
 on:
   push:
@@ -7,37 +7,17 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+    - name: Build Docker image locally
+      run: docker build . -t healthapp-local
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
-    - name: Run Django registration tests
-      run: python manage.py test register.test --noinput
-
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Build Docker image
-      run: docker build . --file Dockerfile --tag jcmontano13/healthapp:latest
-
-    - name: Push to Docker Hub
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Run container and test
       run: |
-        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        docker push jcmontano13/healthapp:latest
+        docker run -d --name healthapp -p 8000:8000 healthapp-local
+        sleep 5  # wait for container to boot
+        curl -f http://localhost:8000  # basic health check

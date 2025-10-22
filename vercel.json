@@ -1,9 +1,8 @@
 {
   "builds": [
     {
-      "src": "my_health_app/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "50mb" }
+      "src": "Dockerfile",
+      "use": "@vercel/docker"
     }
   ],
   "routes": [

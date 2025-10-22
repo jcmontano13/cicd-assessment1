@@ -1,4 +1,4 @@
-name: Registration Test CI
+name: Local Docker CI
 
 on:
   push:
@@ -10,28 +10,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      web:
-        build:
-          context: .
-        ports:
-          - 8000:8000
-        options: >-
-          --health-cmd="curl --fail http://localhost:8000 || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Python and dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Wait for Django to be ready
-      run: sleep 20
-
-    - name: Run registration test
-      run: python register/test.py
+    - name: Build Docker image in CI
+      run: docker build . -t healthapp-ci

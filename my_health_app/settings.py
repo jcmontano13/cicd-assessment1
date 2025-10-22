@@ -58,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "my_health_app.wsgi.application"
+WSGI_APPLICATION = "my_health_app.wsgi.app"
 
 # --- Database ---
 DATABASES = {

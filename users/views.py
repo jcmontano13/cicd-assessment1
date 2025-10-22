@@ -1,61 +1,35 @@
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views import View
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from django.contrib.auth import authenticate
-import json
 
 from .models import CustomUser
+from .serializers import RegisterSerializer, LoginSerializer
 
-@method_decorator(csrf_exempt, name="dispatch")
-class RegisterView(View):
-    def post(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body)
 
-            email = data.get("email")
-            password = data.get("password")
-            display_name = data.get("display_name")
-
-            if not email or not password or not display_name:
-                return JsonResponse({"error": "All fields are required"}, status=400)
-
-            if CustomUser.objects.filter(email=email).exists():
-                return JsonResponse({"error": "Email already registered"}, status=400)
-
-            user = CustomUser.objects.create_user(
-                email=email,
-                display_name=display_name,
-                password=password,
-            )
-
-            return JsonResponse(
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(
                 {"message": "User registered successfully", "user_id": user.id},
-                status=201,
+                status=status.HTTP_201_CREATED
             )
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class LoginView(View):
-    def post(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body)
-
-            email = data.get("email")
-            password = data.get("password")
-
-            if not email or not password:
-                return JsonResponse({"error": "Email and password are required"}, status=400)
-
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
             user = authenticate(request, username=email, password=password)
-
-            if user is not None:
-                return JsonResponse({"message": "Login successful", "user_id": user.id}, status=200)
-            else:
-                return JsonResponse({"error": "Invalid credentials"}, status=401)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+            if user:
+                return Response(
+                    {"message": "Login successful", "user_id": user.id},
+                    status=status.HTTP_200_OK
+                )
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -23,7 +23,7 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Run Django registration tests
-      run: python manage.py test register.test
+      run: python manage.py test register.test --noinput
 
   build:
     runs-on: ubuntu-latest

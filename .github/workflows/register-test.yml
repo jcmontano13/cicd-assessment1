@@ -1,4 +1,4 @@
-name: Local Docker CI
+name: Build And Test
 
 on:
   push:
@@ -11,7 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Build Docker image in CI
+        run: docker build . -t healthapp-ci
+      - name: install packages
+        run: pip install -r requirements.txt
+      - name: run tests
+        run: python manage.py test
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
     - name: Build Docker image in CI
       run: docker build . -t healthapp-ci

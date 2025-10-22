@@ -8,7 +8,8 @@ from users.views import RegisterView, LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/register/', RegisterView.as_view()),
-    path('api/login/', LoginView.as_view()),
+    path('api/register/', RegisterView.as_view(), name="register"),
+    path('api/login/', LoginView.as_view(), name="login"),
+
 ]
 

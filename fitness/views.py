@@ -2,7 +2,6 @@ from rest_framework import generics, permissions
 from .models import Activity
 from .serializers import ActivitySerializer
 
-
 class ActivityCreateView(generics.CreateAPIView):
     serializer_class = ActivitySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -17,8 +16,9 @@ class ActivityListView(generics.ListAPIView):
     def get_queryset(self):
         return Activity.objects.filter(user=self.request.user).order_by("-date_time")
 
+class ActivityDetailView(generics.RetrieveAPIView):  # 👈 Story 15
+    serializer_class = ActivitySerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-
-from django.shortcuts import render
-
-# Create your views here.
+    def get_queryset(self):
+        return Activity.objects.filter(user=self.request.user)

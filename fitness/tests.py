@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from datetime import timedelta
 from django.utils import timezone
-
+from fitness.models import Activity
 
 class ActivityLoggingTest(APITestCase):
     def setUp(self):
@@ -16,7 +16,8 @@ class ActivityLoggingTest(APITestCase):
         )
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
-        self.url = reverse("activity-create")
+        self.create_url = reverse("activity-create")
+        self.list_url = reverse("activity-list")
 
     def test_log_activity_success(self):
         payload = {
@@ -26,7 +27,7 @@ class ActivityLoggingTest(APITestCase):
             "status": "Completed",
             "remarks": "Morning jog around the park"
         }
-        response = self.client.post(self.url, payload, format="json")
+        response = self.client.post(self.create_url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["activity_type"], "Running")
         self.assertEqual(response.data["status"], "Completed")
@@ -37,10 +38,30 @@ class ActivityLoggingTest(APITestCase):
             "activity_type": "Cycling"
             # Missing date_time, duration, status, remarks
         }
-        response = self.client.post(self.url, payload, format="json")
+        response = self.client.post(self.create_url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_list_user_activities(self):
+        # Create two activities
+        Activity.objects.create(
+            user=self.user,
+            activity_type="Running",
+            date_time=timezone.now(),
+            duration=timedelta(minutes=30),
+            status="Completed",
+            remarks="Morning run"
+        )
+        Activity.objects.create(
+            user=self.user,
+            activity_type="Cycling",
+            date_time=timezone.now(),
+            duration=timedelta(minutes=45),
+            status="Planned",
+            remarks="Evening ride"
+        )
 
-from django.test import TestCase
-
-# Create your tests here.
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["user"], self.user.id)
+        self.assertEqual(response.data[1]["user"], self.user.id)

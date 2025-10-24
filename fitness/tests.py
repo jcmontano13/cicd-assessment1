@@ -82,3 +82,19 @@ class ActivityLoggingTest(APITestCase):
         self.assertEqual(response.data["status"], "Completed")
         self.assertEqual(response.data["remarks"], "Evening swim at the pool")
         self.assertEqual(response.data["user"], self.user.id)
+
+    def test_update_status_variants(self):
+        activity = Activity.objects.create(
+            user=self.user,
+            activity_type="Yoga",
+            date_time=timezone.now(),
+            duration=timedelta(minutes=60),
+            status="Planned",
+            remarks="Morning yoga session"
+        )
+        update_url = reverse("activity-update", kwargs={"pk": activity.pk})
+
+        for new_status in ["In-Progress", "Completed", "Planned"]:
+            response = self.client.patch(update_url, {"status": new_status}, format="json")
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data["status"], new_status)

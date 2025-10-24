@@ -29,3 +29,10 @@ class ActivityUpdateView(generics.UpdateAPIView):  # 👈 Story 17 (PATCH suppor
 
     def get_queryset(self):
         return Activity.objects.filter(user=self.request.user)
+
+class ActivityDeleteView(generics.DestroyAPIView):  # 👈 Story 19
+    serializer_class = ActivitySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Activity.objects.filter(user=self.request.user)

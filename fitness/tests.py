@@ -98,3 +98,21 @@ class ActivityLoggingTest(APITestCase):
             response = self.client.patch(update_url, {"status": new_status}, format="json")
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(response.data["status"], new_status)
+
+    def test_delete_activity(self):
+        activity = Activity.objects.create(
+            user=self.user,
+            activity_type="Boxing",
+            date_time=timezone.now(),
+            duration=timedelta(minutes=30),
+            status="Planned",
+            remarks="Incorrect entry"
+        )
+        delete_url = reverse("activity-delete", kwargs={"pk": activity.pk})
+        response = self.client.delete(delete_url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Confirm it's gone
+        detail_url = reverse("activity-detail", kwargs={"pk": activity.pk})
+        follow_up = self.client.get(detail_url)
+        self.assertEqual(follow_up.status_code, status.HTTP_404_NOT_FOUND)

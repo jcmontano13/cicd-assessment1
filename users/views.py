@@ -2,12 +2,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
+from rest_framework.authtoken.models import Token
 
 from .models import CustomUser
 from .serializers import RegisterSerializer, LoginSerializer
 
-
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -20,6 +23,8 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -27,8 +32,13 @@ class LoginView(APIView):
             password = serializer.validated_data['password']
             user = authenticate(request, username=email, password=password)
             if user:
+                token, created = Token.objects.get_or_create(user=user)
                 return Response(
-                    {"message": "Login successful", "user_id": user.id},
+                    {
+                        "message": "Login successful",
+                        "user_id": user.id,
+                        "token": token.key  # 👈 Token returned here
+                    },
                     status=status.HTTP_200_OK
                 )
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

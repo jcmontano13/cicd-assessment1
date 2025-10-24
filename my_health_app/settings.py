@@ -27,7 +27,9 @@ INSTALLED_APPS = [
     # local apps go here, e.g. "tracker",
     "register",
     "users",
+    "fitness",
     "rest_framework",
+    "rest_framework.authtoken",
 
 ]
 
@@ -99,12 +101,14 @@ AUTH_USER_MODEL = "users.CustomUser"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
 
 if 'test' in sys.argv:
     DATABASES['default']['TEST'] = {

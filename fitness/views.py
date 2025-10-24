@@ -22,3 +22,10 @@ class ActivityDetailView(generics.RetrieveAPIView):  # 👈 Story 15
 
     def get_queryset(self):
         return Activity.objects.filter(user=self.request.user)
+
+class ActivityUpdateView(generics.UpdateAPIView):  # 👈 Story 17 (PATCH support)
+    serializer_class = ActivitySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Activity.objects.filter(user=self.request.user)

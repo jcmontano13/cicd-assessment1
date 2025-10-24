@@ -16,8 +16,11 @@ jobs:
         run: docker build . -t healthapp-ci
       - name: install packages
         run: pip install -r requirements.txt
-      - name: run tests
+      - name: run login
         run: python manage.py test
+      - name: run add activity
+        run: python manage.py test fitness
+
 
   build:
     runs-on: ubuntu-latest

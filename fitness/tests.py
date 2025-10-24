@@ -42,7 +42,6 @@ class ActivityLoggingTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_list_user_activities(self):
-        # Create two activities
         Activity.objects.create(
             user=self.user,
             activity_type="Running",
@@ -65,3 +64,21 @@ class ActivityLoggingTest(APITestCase):
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]["user"], self.user.id)
         self.assertEqual(response.data[1]["user"], self.user.id)
+
+    def test_view_individual_activity(self):
+        activity = Activity.objects.create(
+            user=self.user,
+            activity_type="Swimming",
+            date_time=timezone.now(),
+            duration=timedelta(minutes=60),
+            status="Completed",
+            remarks="Evening swim at the pool"
+        )
+        detail_url = reverse("activity-detail", kwargs={"pk": activity.pk})
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], activity.pk)
+        self.assertEqual(response.data["activity_type"], "Swimming")
+        self.assertEqual(response.data["status"], "Completed")
+        self.assertEqual(response.data["remarks"], "Evening swim at the pool")
+        self.assertEqual(response.data["user"], self.user.id)

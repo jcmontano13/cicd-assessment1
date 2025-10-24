@@ -18,7 +18,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: run login
         run: python manage.py test
-      - name: run add activity
+      - name: run activity functions (add/edit/view/delete)
         run: python manage.py test fitness
 
 

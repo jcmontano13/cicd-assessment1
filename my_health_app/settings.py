@@ -24,16 +24,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # local apps go here, e.g. "tracker",
+    # local apps
     "register",
     "users",
     "fitness",
     "rest_framework",
     "rest_framework.authtoken",
-
+    "corsheaders",  # 👈 Added for cross-platform access
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # 👈 Must be at the top
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -102,14 +103,19 @@ AUTH_USER_MODEL = "users.CustomUser"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+#        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
+# --- CORS ---
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+# Optional: allow all origins during dev
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL", "False") == "True"
 
+# --- Test DB ---
 if 'test' in sys.argv:
     DATABASES['default']['TEST'] = {
         'MIRROR': 'default'
